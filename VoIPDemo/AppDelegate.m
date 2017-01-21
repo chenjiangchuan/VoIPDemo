@@ -7,8 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import <PushKit/PushKit.h>
 
-@interface AppDelegate ()
+@interface AppDelegate () <PKPushRegistryDelegate>
 
 @end
 
@@ -16,36 +17,63 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    [self registerVoipNotifications];
+    
     return YES;
 }
 
-
-- (void)applicationWillResignActive:(UIApplication *)application {
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+/**
+ *  注册VoIP
+ */
+- (void)registerVoipNotifications {
+    PKPushRegistry *voipRegistry = [[PKPushRegistry alloc] initWithQueue:dispatch_get_main_queue()];
+    voipRegistry.delegate = self;
+    voipRegistry.desiredPushTypes = [NSSet setWithObject:PKPushTypeVoIP];
+    NSLog(@"VoIP registered");
+    
+    UIUserNotificationSettings *userNotifySetting = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert categories:nil];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:userNotifySetting];
 }
 
+#pragma mark - PKPushRegistryDelegate
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+- (void)pushRegistry:(PKPushRegistry *)registry didUpdatePushCredentials:(PKPushCredentials *)credentials forType:(PKPushType)type {
+    
+    NSString *str = [NSString stringWithFormat:@"%@",credentials.token];
+    NSString *_tokenStr = [[[str stringByReplacingOccurrencesOfString:@"<" withString:@""]
+                            stringByReplacingOccurrencesOfString:@">" withString:@""] stringByReplacingOccurrencesOfString:@" " withString:@""];
+    NSLog(@"device_token is %@" , str);
 }
 
-
-- (void)applicationWillEnterForeground:(UIApplication *)application {
-    // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+- (void)pushRegistry:(PKPushRegistry *)registry didReceiveIncomingPushWithPayload:(PKPushPayload *)payload forType:(PKPushType)type {
+    
+    UIUserNotificationType theType = [UIApplication sharedApplication].currentUserNotificationSettings.types;
+    if (theType == UIUserNotificationTypeNone)
+    {
+        UIUserNotificationSettings *userNotifySetting = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:userNotifySetting];
+    }
+    
+    NSDictionary * dic = payload.dictionaryPayload;
+    
+    NSLog(@"dic  %@",dic);
+    
+    if ([dic[@"aps"][@"alert"] isEqualToString:@"call"]) {
+        UILocalNotification *backgroudMsg = [[UILocalNotification alloc] init];
+        backgroudMsg.alertBody= @"You receive a new call";
+        backgroudMsg.soundName = @"ring.caf";
+        backgroudMsg.applicationIconBadgeNumber = [[UIApplication sharedApplication]applicationIconBadgeNumber] + 1;
+        [[UIApplication sharedApplication] presentLocalNotificationNow:backgroudMsg];
+    } else if ([dic[@"aps"][@"alert"] isEqualToString:@"cancel"]) {
+        
+        [[UIApplication sharedApplication] cancelAllLocalNotifications];
+        
+        UILocalNotification * wei = [[UILocalNotification alloc] init];
+        wei.alertBody= [NSString stringWithFormat:@"%ld 个未接来电",[[UIApplication sharedApplication]applicationIconBadgeNumber]];
+        wei.applicationIconBadgeNumber = [[UIApplication sharedApplication]applicationIconBadgeNumber];
+        [[UIApplication sharedApplication] presentLocalNotificationNow:wei];
+    }
 }
-
-
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-}
-
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-}
-
 
 @end

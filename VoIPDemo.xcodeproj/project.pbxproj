@@ -13,6 +13,7 @@
 		D6366A2B1E337BFF009324DC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6366A291E337BFF009324DC /* Main.storyboard */; };
 		D6366A2D1E337BFF009324DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6366A2C1E337BFF009324DC /* Assets.xcassets */; };
 		D6366A301E337BFF009324DC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6366A2E1E337BFF009324DC /* LaunchScreen.storyboard */; };
+		D6366A391E337C48009324DC /* PushKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6366A381E337C48009324DC /* PushKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		D6366A2C1E337BFF009324DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D6366A2F1E337BFF009324DC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6366A311E337BFF009324DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D6366A381E337C48009324DC /* PushKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PushKit.framework; path = System/Library/Frameworks/PushKit.framework; sourceTree = SDKROOT; };
+		D6366A3A1E337C4B009324DC /* VoIPDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VoIPDemo.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6366A391E337C48009324DC /* PushKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +48,7 @@
 			children = (
 				D6366A1F1E337BFF009324DC /* VoIPDemo */,
 				D6366A1E1E337BFF009324DC /* Products */,
+				D6366A371E337C48009324DC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,6 +63,7 @@
 		D6366A1F1E337BFF009324DC /* VoIPDemo */ = {
 			isa = PBXGroup;
 			children = (
+				D6366A3A1E337C4B009324DC /* VoIPDemo.entitlements */,
 				D6366A231E337BFF009324DC /* AppDelegate.h */,
 				D6366A241E337BFF009324DC /* AppDelegate.m */,
 				D6366A261E337BFF009324DC /* ViewController.h */,
@@ -77,6 +83,14 @@
 				D6366A211E337BFF009324DC /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D6366A371E337C48009324DC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D6366A381E337C48009324DC /* PushKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -110,7 +124,16 @@
 				TargetAttributes = {
 					D6366A1C1E337BFF009324DC = {
 						CreatedOnToolsVersion = 8.2.1;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = WNDNY35RC8;
+						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -272,10 +295,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VoIPDemo/VoIPDemo.entitlements;
+				DEVELOPMENT_TEAM = WNDNY35RC8;
 				INFOPLIST_FILE = VoIPDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.sayee.www.VoIPDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdsayee.ylb.release;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "c5353556-2fd4-49e6-b139-4a2b18b0406a";
+				PROVISIONING_PROFILE_SPECIFIER = ylb_machine;
 			};
 			name = Debug;
 		};
@@ -283,9 +311,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VoIPDemo/VoIPDemo.entitlements;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = VoIPDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.sayee.www.VoIPDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gdsayee.ylb.release;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
